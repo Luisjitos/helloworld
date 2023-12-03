@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Get Code') {
+            steps {
+                echo 'Descargando código...'
+                git 'https://github.com/Luisjitos/helloworld.git'
+            }
+        }
+        stage('build') {
+            steps {
+                echo 'No es necesario compilar, es un build vacío'
+                echo env.WORKSPACE
+                bat 'dir'
+            }
+        }
+        stage('Tests') {
+            parallel {
+                stage('Unit') {
+                    steps {
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            bat '''
+                                set PYTHONPATH=%WORKSPACE%
+                                pytest --junitxml=result-unit.xml test\\unit
+                            '''
+                        }
+                    }
+                }
+                stage('Service') {
+                    steps {
+                        bat '''
+                            set FLASK_APP=app\\api.py
+                            set FLASK_ENV=development
+                            start flask run
+                            start java -jar C:\\Users\\JoseLuis\\Documents\\wiremock\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Documents\\wiremock
+                            set PYTHONPATH=%WORKSPACE%
+                            pytest --junitxml=result-rest.xml test\\rest
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Result') {
+            steps {
+                junit 'result*.xml'
+            }
+        }
+    }
+}
