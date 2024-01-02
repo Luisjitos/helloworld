@@ -34,7 +34,7 @@ pipeline {
                             start java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Documents\\wiremock
                             ping 127.0.0.1 -n 15
                             set PYTHONPATH=%WORKSPACE%
-                            pytest --junitxml=result-rest.xml test\\rest
+                            C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-rest.xml test\\rest
                         '''
                     }
                 }
