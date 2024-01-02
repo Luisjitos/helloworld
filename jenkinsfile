@@ -20,7 +20,7 @@ pipeline {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             bat '''
                                 set PYTHONPATH=%WORKSPACE%
-                                pytest --junitxml=result-unit.xml test\\unit
+                                C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\pytest --junitxml=result-unit.xml test\\unit
                             '''
                         }
                     }
