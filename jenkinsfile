@@ -15,7 +15,9 @@ pipeline {
                 bat 'dir'
             }
         }
-        stage('Unit') {
+        stage('Tests') {
+            parallel {
+                stage('Unit') {
                     steps {
                         catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
                             bat '''
@@ -28,23 +30,24 @@ pipeline {
                 stage('Rest') {
                     steps {
                         bat '''
-                set FLASK_APP=app\\api.py
-                set FLASK_ENV=development
-                start cmd /c "flask run &"
+                            set FLASK_APP=app\\api.py
+                            set FLASK_ENV=development
+                            start cmd /c "flask run &"
 
-                ping 127.0.0.1 -n 15
+                            ping 127.0.0.1 -n 15
 
-                start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
-                
-                set PYTHONPATH=%WORKSPACE%
-                C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
-                '''
+                            start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
+                            
+                            set PYTHONPATH=%WORKSPACE%
+                            C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                        '''
                     }
                 }
-            
+            }
+        }
         stage('Result') {
             steps {
-                junit 'result*.xml'
+                junit 'result*.xml' // Archiva los resultados de las pruebas JUnit
             }
         }
     }
