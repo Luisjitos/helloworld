@@ -5,44 +5,42 @@ pipeline {
         stage('Get Code') {
             steps {
                 echo 'Descargando código...'
-                git 'https://github.com/Luisjitos/helloworld.git'
+                git url: 'https://github.com/Luisjitos/helloworld.git', branch: 'develop'
             }
         }
         stage('build') {
             steps {
                 echo 'No es necesario compilar, es un build vacío'
                 echo env.WORKSPACE
-                bat 'dir'
+                bat 'dir' 
             }
         }
-        stage('Tests') {
-            parallel {
-                stage('Unit') {
-                    steps {
-                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                            bat '''
-                                set PYTHONPATH=%WORKSPACE%
-                                C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
-                            '''
-                        }
-                    }
-                }
-                stage('Rest') {
-                    steps {
+        stage('Unit Tests') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    dir('C:\\ProgramData\\Jenkins\\.jenkins\\workspace') {
                         bat '''
-                            set FLASK_APP=app\\api.py
-                            set FLASK_ENV=development
-                            start cmd /c "flask run &"
-
-                            ping 127.0.0.1 -n 15
-
-                            start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
-                            
                             set PYTHONPATH=%WORKSPACE%
                             C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
                         '''
                     }
                 }
+            }
+        }
+        stage('Rest Tests') {
+            steps {
+                bat '''
+                    set FLASK_APP=app\\api.py
+                    set FLASK_ENV=development
+                    start cmd /c "flask run &"
+
+                    ping 127.0.0.1 -n 15
+
+                    start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
+                    
+                    set PYTHONPATH=%WORKSPACE%
+                    C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-rest.xml test\\rest
+                '''
             }
         }
         stage('Result') {
