@@ -1,0 +1,56 @@
+pipeline {
+    agent none // No se asigna un agente inicialmente
+
+    stages {
+        stage('Get Code') {
+            agent any // Esta etapa puede ejecutarse en cualquier agente disponible
+            steps {
+                echo 'Descargando código...'
+                git 'https://github.com/Luisjitos/helloworld.git'
+            }
+        }
+        stage('build') {
+            agent any // Otra etapa que puede ejecutarse en cualquier agente disponible
+            steps {
+                echo 'No es necesario compilar, es un build vacío'
+                echo env.WORKSPACE
+                bat 'dir'
+            }
+        }
+        stage('Tests') {
+            parallel {
+                stage('Unit') {
+                    agent { label 'linux' } // Esta etapa se ejecuta en un agente etiquetado como 'linux'
+                    steps {
+                        catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                            bat '''
+                                set PYTHONPATH=%WORKSPACE%
+                                C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                            '''
+                        }
+                    }
+                }
+                stage('Rest') {
+                    agent { label 'windows' } // Esta etapa se ejecuta en un agente etiquetado como 'windows'
+                    steps {
+                        bat '''
+                            set FLASK_APP=app\\api.py
+                            set FLASK_ENV=development
+                            start cmd /c "flask run &"
+                            ping 127.0.0.1 -n 15
+                            start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
+                            set PYTHONPATH=%WORKSPACE%
+                            C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Result') {
+            agent any // Esta etapa puede ejecutarse en cualquier agente disponible
+            steps {
+                junit 'result*.xml' // Archiva los resultados de las pruebas JUnit
+            }
+        }
+    }
+}
