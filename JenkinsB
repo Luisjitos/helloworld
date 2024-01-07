@@ -26,21 +26,20 @@ pipeline {
                 }
             }
         }
-
-stage('Rest') {
-                    steps {
-                        bat '''
-                            set FLASK_APP=app\\api.py
-                            set FLASK_ENV=development
-                            start cmd /c "flask run &"
-                            ping 127.0.0.1 -n 10
-                            start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
-                            set PYTHONPATH=%WORKSPACE%
-                            C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
-                        '''
-                    }
-                }
-stage('Static') {
+        stage('Rest') {
+            steps {
+                bat '''
+                    set FLASK_APP=app\\api.py
+                    set FLASK_ENV=development
+                    start cmd /c "flask run &"
+                    ping 127.0.0.1 -n 10
+                    start cmd /c "java -jar C:\\Users\\JoseLuis\\Downloads\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\JoseLuis\\Downloads"
+                    set PYTHONPATH=%WORKSPACE%
+                    C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                '''
+            }
+        }
+        stage('Static') {
             steps {
                 // ejecución del análisis estático
                 bat '''
@@ -49,7 +48,7 @@ stage('Static') {
                 recordIssues tools: [flake8(name: 'Flake8',pattern:'flake8.out')], qualityGates:[[threshold:10, type:'total', unstable:true], [threshold:12, type:'total', unstable:true]]
             }
         }
-stage('Security Test') {
+        stage('Security Test') {
             steps {
                 // Instalación de Bandit y ejecución del análisis de seguridad
                 bat '''
@@ -57,13 +56,12 @@ stage('Security Test') {
                 '''
             }
         }
-stage('Performance') {
+        stage('Performance') {
             steps {
                 // Ejecución de pruebas de carga con JMeter
                 bat 'jmeter -n -t your_test_plan.jmx -l jmeter_results.jtl'
             }
         }
-
         stage('coverage') {
             steps {
                 bat '''
@@ -73,15 +71,12 @@ stage('Performance') {
                 cobertura coberturaReportFile: 'coverage.xml'
             }
         }
-
-
-        */stage('Results') {
+        stage('Results') {
             steps {
                 bat 'whoami'
                 bat 'hostname'
                 junit 'result*.xml'
             }
         }
-*/
     }
 }
