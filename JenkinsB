@@ -39,21 +39,21 @@ pipeline {
                 '''
             }
         }
-       stage('Static Analysis') {
-    steps {
-        // Ejecución del análisis estático
-        bat '''
-            "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8" --exit-zero --format=pylint app > flake8.out
-        '''
-        recordIssues(
-            tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
-            qualityGates: [
-                [threshold: 10, type: 'total', unstable: true],
-                [threshold: 12, type: 'total', unstable: true]
-            ]
-        )
-    }
-}
+        stage('Static Analysis') {
+            steps {
+                // Ejecución del análisis estático
+                bat '''
+                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8" --exit-zero --format=pylint app > flake8.out
+                '''
+                recordIssues(
+                    tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
+                    qualityGates: [
+                        [threshold: 10, type: 'total', unstable: true],
+                        [threshold: 12, type: 'total', unstable: true]
+                    ]
+                )
+            }
+        }
         stage('Security Test') {
             steps {
                 // Instalación de Bandit y ejecución del análisis de seguridad
@@ -68,7 +68,7 @@ pipeline {
                 bat 'jmeter -n -t your_test_plan.jmx -l jmeter_results.jtl'
             }
         }
-        stage('coverage') {
+        stage('Coverage') {
             steps {
                 bat '''
                     coverage run --branch --source=app --omit=app\\_init_.py,app\\api.py -m pytest test\\unit
