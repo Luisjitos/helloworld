@@ -78,8 +78,6 @@ stage('Performance') {
             steps {
                 bat 'whoami'
                 bat 'hostname'
-                unstash "result-unit stash"
-                // unstash "rest stash" (Comentado porque no hay stash de rest)
                 junit 'result*.xml'
             }
         }
