@@ -43,7 +43,7 @@ pipeline {
             steps {
                 // Ejecución del análisis estático
                 bat '''
-                    C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8 --exit-zero --format=pylint app > flake8.out
+                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8" --exit-zero --format=pylint app > flake8.out
                 '''
                 recordIssues(
                     tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
