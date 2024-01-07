@@ -44,7 +44,7 @@ stage('Static') {
             steps {
                 // ejecución del análisis estático
                 bat '''
-                    flake8 --format=pylint --exit-zero app > flake8.out
+                    flake8 --exit-zero --format=pylint app > flake8.out
                 '''
                 recordIssues tools: [flake8(name: 'Flake8',pattern:'flake8.out')], qualityGates:[[threshold:10, type:'total', unstable:true], [threshold:12, type:'total', unstable:true]]
             }
