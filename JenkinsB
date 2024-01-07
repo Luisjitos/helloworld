@@ -11,18 +11,6 @@ pipeline {
                 stash includes: "*", name: "code stash"
             }
         }
-
-        stage('Build') {
-            steps {
-                bat 'whoami'
-                bat 'hostname'
-                unstash "code stash"
-                echo 'Eyyy, esto es Python. No hay que compilar nada!!!'
-                echo env.WORKSPACE
-                bat 'dir'
-            }
-        }
-
         stage('Unit') {
             steps {
                 catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
