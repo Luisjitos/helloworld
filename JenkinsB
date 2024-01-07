@@ -22,6 +22,7 @@ pipeline {
                         C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
                     '''
                     stash includes: "*", name: "result-unit stash"
+                    junit 'result*.xml'
                 }
             }
         }
@@ -39,6 +40,28 @@ stage('Rest') {
                         '''
                     }
                 }
+stage('Static') {
+            steps {
+                // ejecución del análisis estático
+                bat '''
+                    flake8 --format=pylint --exit-zero app > flake8.out
+                '''
+            }
+        }
+stage('Security Test') {
+            steps {
+                // Instalación de Bandit y ejecución del análisis de seguridad
+                bat '''
+                    bandit -r app -f json -o bandit_results.json
+                '''
+            }
+        }
+stage('Performance') {
+            steps {
+                // Ejecución de pruebas de carga con JMeter
+                bat 'jmeter -n -t your_test_plan.jmx -l jmeter_results.jtl'
+            }
+        }
 
         stage('coverage') {
             steps {
@@ -49,6 +72,7 @@ stage('Rest') {
                 cobertura coberturaReportFile: 'coverage.xml'
             }
         }
+
 
         */stage('Results') {
             steps {
