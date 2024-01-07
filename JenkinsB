@@ -39,7 +39,7 @@ pipeline {
                 '''
             }
         }
-        stage('Static Analysis') {
+        stage('Static') {
             steps {
                 // Ejecución del análisis estático
                 bat '''
@@ -54,7 +54,7 @@ pipeline {
                 )
             }
         }
-        stage('Security Test') {
+        stage('Security') {
     steps {
         // Ejecución del análisis de seguridad con Bandit
         bat '''
