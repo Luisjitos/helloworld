@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Get Code') {
+            steps {
+                bat 'whoami'
+                bat 'hostname'
+                // Obtener código del repo
+                git branch: 'master', url: 'https://github.com/Luisjitos/helloworld'
+                stash includes: "*", name: "code stash"
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'whoami'
+                bat 'hostname'
+                unstash "code stash"
+                echo 'Eyyy, esto es Python. No hay que compilar nada!!!'
+                echo env.WORKSPACE
+                bat 'dir'
+            }
+        }
+
+        stage('Unit') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    bat 'whoami'
+                    bat 'hostname'
+                    unstash "code stash"
+                    bat '''
+                        set PYTHONPATH=%WORKSPACE%
+                        C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest --junitxml=result-unit.xml test\\unit
+                    '''
+                    stash includes: "*", name: "result-unit stash"
+                }
+            }
+        }
+
+        stage('coverage') {
+            steps {
+                bat '''
+                    coverage run --branch --source=app --omit=app\\_init_.py,app\\api.py -m pytest test\\unit
+                    coverage xml
+                '''
+                cobertura coberturaReportFile: 'coverage.xml'
+            }
+        }
+
+        stage('Results') {
+            steps {
+                bat 'whoami'
+                bat 'hostname'
+                unstash "result-unit stash"
+                // unstash "rest stash" (Comentado porque no hay stash de rest)
+                junit 'result*.xml'
+            }
+        }
+    }
+}
