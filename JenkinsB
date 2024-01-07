@@ -77,12 +77,5 @@ pipeline {
                 cobertura coberturaReportFile: 'coverage.xml'
             }
         }
-        stage('Results') {
-            steps {
-                bat 'whoami'
-                bat 'hostname'
-                junit 'result*.xml'
-            }
-        }
     }
 }
