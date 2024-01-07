@@ -55,13 +55,18 @@ pipeline {
             }
         }
         stage('Security Test') {
-            steps {
-                // Instalación de Bandit y ejecución del análisis de seguridad
-                bat '''
-                    bandit -r app -f json -o bandit_results.json
-                '''
-            }
-        }
+    steps {
+        // Ejecución del análisis de seguridad con Bandit
+        bat '''
+            bandit --exit-zero -r . -f custom -o bandit.out --severity-level medium --msg-template "{abspath}:{line}: [{test_id}] {msg}"
+        '''
+        recordIssues tools: [bandit(name: 'Bandit', pattern: 'bandit.out')],
+                     qualityGates: [
+                         [threshold: 1, type: 'TOTAL', unstable: true],
+                         [threshold: 2, type: 'TOTAL', unstable: false]
+                     ]
+    }
+}
         stage('Performance') {
             steps {
                 // Ejecución de pruebas de carga con JMeter
