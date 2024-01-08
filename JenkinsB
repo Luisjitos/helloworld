@@ -5,7 +5,6 @@ pipeline {
             steps {
                 bat 'whoami'
                 bat 'hostname'
-                // Obtener código del repo
                 git branch: 'master', url: 'https://github.com/Luisjitos/helloworld'
                 stash includes: "*", name: "code stash"
             }
@@ -40,7 +39,6 @@ pipeline {
         }
         stage('Static') {
             steps {
-                // Ejecución del análisis estático
                 bat '''
                     "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8" --exit-zero --format=pylint app > flake8.out
                 '''
@@ -55,7 +53,6 @@ pipeline {
         }
         stage('Security') {
             steps {
-                // Ejecución del análisis de seguridad con Bandit
                 bat '''
                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\bandit" --exit-zero -r . -f custom -o bandit.out --severity-level medium --msg-template "{abspath}:{line}: [{test_id}] {msg}"
                 '''
@@ -69,18 +66,17 @@ pipeline {
             }
         }
         stage('Performance') {
-    steps {
-        // Ejecución de pruebas de carga con JMeter
-        bat 'C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l falsk.jtl'
-        recordIssues(
-            tools: [pylint(name: 'bandit', pattern: 'bandit.out')],
-            qualityGates: [
-                [threshold: 1, type: 'TOTAL', unstable: true],
-                [threshold: 1, type: 'TOTAL', unstable: true]
-            ]
-        )
-    }
-}
+            steps {
+                bat 'C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l falsk.jtl'
+                recordIssues(
+                    tools: [pylint(name: 'bandit', pattern: 'bandit.out')],
+                    qualityGates: [
+                        [threshold: 1, type: 'TOTAL', unstable: true],
+                        [threshold: 1, type: 'TOTAL', unstable: true]
+                    ]
+                )
+            }
+        }
         stage('Coverage') {
             steps {
                 bat '''
