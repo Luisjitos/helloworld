@@ -69,11 +69,18 @@ pipeline {
             }
         }
         stage('Performance') {
-            steps {
-                // Ejecución de pruebas de carga con JMeter
-                bat 'jmeter -n -t your_test_plan.jmx -l jmeter_results.jtl'
-            }
-        }
+    steps {
+        // Ejecución de pruebas de carga con JMeter
+        bat 'C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter -n -t test\\jmeter\\flask.jmx -f -l falsk.jtl'
+        recordIssues(
+            tools: [pylint(name: 'bandit', pattern: 'bandit.out')],
+            qualityGates: [
+                [threshold: 1, type: 'TOTAL', unstable: true],
+                [threshold: 1, type: 'TOTAL', unstable: true]
+            ]
+        )
+    }
+}
         stage('Coverage') {
             steps {
                 bat '''
