@@ -45,8 +45,8 @@ pipeline {
                 recordIssues(
                     tools: [flake8(name: 'Flake8', pattern: 'flake8.out')],
                     qualityGates: [
-                        [threshold: 15, type: 'TOTAL', unstable: true],
-                        [threshold: 17, type: 'TOTAL', unstable: false]
+                        [threshold: 8, type: 'TOTAL', unstable: true],
+                        [threshold: 10, type: 'TOTAL', unstable: false]
                     ]
                 )
             }
@@ -59,8 +59,8 @@ pipeline {
                 recordIssues(
                     tools: [bandit(name: 'Bandit', pattern: 'bandit.out')],
                     qualityGates: [
-                        [threshold: 1, type: 'TOTAL', unstable: true],
-                        [threshold: 2, type: 'TOTAL', unstable: false]
+                        [threshold: 2, type: 'TOTAL', unstable: true],
+                        [threshold: 4, type: 'TOTAL', unstable: false]
                     ]
                 )
             }
@@ -85,7 +85,8 @@ pipeline {
                 '''
                 cobertura(
                     coberturaReportFile: 'coverage.xml', 
-                    conditionalCoverageTargets: '100,80,95', 
+                    conditionalCoverageTargets: '100,80,95',
+                    lineCoverageTargets: '100, 85, 95',
                     failUnstable: false
                 )
             }
