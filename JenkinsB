@@ -59,12 +59,8 @@ pipeline {
         stage('Performance') {
             steps {
                 script {
-                      bat '''
-SET FLASK_APP=app\\api.py && call start "Flask Server" flask run
-'''
-                      bat '''
-ping 127.0.0.1 -n 10 > nul
-'''
+                      bat 'SET FLASK_APP=app\\api.py && start /B cmd /c "flask run"'
+            bat 'ping 127.0.0.1 -n 10 > nul'
                     bat '''
                         "C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter" -n -t C:\\CP1B\\test\\helloworld\\test\\test1\\test.jmx -f -l flask.jtl
                     '''
