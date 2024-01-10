@@ -65,21 +65,22 @@ pipeline {
                 )
             }
         }
-        stage('Performance') {
-            steps {
-                bat '''
-                    "C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter" -n -t test\\jmeter\\flask.jmx -f -l C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test1\\test\\jmeter\\flask.jtl
-                '''
-                recordIssues(
-                    tools: [pylint(name: 'bandit', pattern: 'bandit.out')],
-                    qualityGates: [
-                        [threshold: 1, type: 'TOTAL', unstable: true],
-                        [threshold: 1, type: 'TOTAL', unstable: true]
-                    ],
-                    perfReport sourceDataFiles: 'C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test1\\test\\jmeter\\flask.jtl'
-                )
-            }
-        }
+stage('Performance') {
+    steps {
+        bat '''
+            "C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter" -n -t test\\jmeter\\flask.jmx -f -l C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test1\\test\\jmeter\\flask.jtl
+        '''
+        recordIssues(
+            tools: [pylint(name: 'bandit', pattern: 'bandit.out')],
+            qualityGates: [
+                [threshold: 1, type: 'TOTAL', unstable: true],
+                [threshold: 1, type: 'TOTAL', unstable: true]
+            ]
+        )
+        perfReport sourceDataFiles: 'C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\test1\\test\\jmeter\\flask.jtl'
+    }
+}
+
         stage('Coverage') {
             steps {
                 bat '''
