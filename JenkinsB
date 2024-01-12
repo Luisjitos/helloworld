@@ -53,7 +53,7 @@ pipeline {
                     "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\coverage" run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit
                     "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\coverage" xml
                     '''
-                    coberturaReport file: 'C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\CP1B\\coverage', conditionalCoverageTargets: '100,83,90', lineCoverageTargets: '100,90,70', failUnstable: false
+                    coberturaReport file: 'coverage.xml', conditionalCoverageTargets: '100,83,90', lineCoverageTargets: '100,90,70', failUnstable: false
             }
         }
 
