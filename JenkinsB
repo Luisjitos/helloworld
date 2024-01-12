@@ -54,7 +54,7 @@ pipeline {
                     "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\bandit" -r . -f custom -o bandit.out -ll --msg-template "{relpath}:{line}: [{test_id}, {severity}] {msg}"  
                 '''
               
-                recordIssues tools: [bandit(name: 'Bandit', pattern: 'bandit.out')], qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], [threshold: 4, type: 'TOTAL', unstable: false]]
+                recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], [threshold: 4, type: 'TOTAL', unstable: false]]
             }
         }
 
