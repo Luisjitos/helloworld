@@ -50,7 +50,7 @@ pipeline {
         stage('Security') {
             steps {
                 bat '''
-                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\bandit" -r . -f custom -o bandit.out -ll --msg-template "{path}:{line}: [{test_id}, {severity}] {msg}"  --exit-zero
+                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\bandit" -r . -f custom -o bandit.out -ll --msg-template "{relpath}:{line}: [{test_id}, {severity}] {msg}"  --exit-zero
                 '''
               
                 recordIssues tools: [pyLint(name: 'Bandit', pattern: 'bandit.out')], qualityGates: [[threshold: 2, type: 'TOTAL', unstable: true], [threshold: 4, type: 'TOTAL', unstable: false]]
