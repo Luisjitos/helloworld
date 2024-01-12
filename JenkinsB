@@ -38,15 +38,6 @@ pipeline {
             }
         }
 
-        stage('Static') {
-            steps {
-                bat '''
-                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8" --exit-zero --format=pylint app > flake8.out
-                '''
-                recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates: [[threshold: 8, type: 'TOTAL', unstable: true, failure: true], [threshold: 10, type: 'TOTAL', unstable: false, failure: true]]
-            }
-        }
-
         stage('Security') {
             steps {
                 bat '''
@@ -57,11 +48,20 @@ pipeline {
             }
         }
 
+        stage('Static') {
+            steps {
+                bat '''
+                    "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flake8" --exit-zero --format=pylint app > flake8.out
+                '''
+                recordIssues tools: [flake8(name: 'Flake8', pattern: 'flake8.out')], qualityGates: [[threshold: 8, type: 'TOTAL', unstable: true, failure: true], [threshold: 10, type: 'TOTAL', unstable: false, failure: true]]
+            }
+        }
+
         stage('Performance') {
             steps {
                 script {
-                      bat 'SET FLASK_APP=app\\api.py && start /B cmd /c "flask run"'
-            bat 'ping 127.0.0.1 -n 10 > nul'
+                    bat 'SET FLASK_APP=app\\api.py && start /B cmd /c "flask run"'
+                    bat 'ping 127.0.0.1 -n 10 > nul'
                     bat '''
                         "C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter" -n -t C:\\CP1B\\test\\helloworld\\test\\test1\\test.jmx -f -l flask.jtl
                     '''
