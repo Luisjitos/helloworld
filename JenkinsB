@@ -57,15 +57,15 @@ pipeline {
             }
         }
 
-        stage('Coverage') {
-            steps {
-                bat '''
-                    coverage run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit
-                    coverage xml
-                '''
-                coberturaReport file:'coverage.xml'
-            }
-        }
+      stage('Coverage') {
+    steps {
+        bat '''
+            "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\coverage" run --branch --source=app --omit=app\\__init__.py,app\\api.py -m pytest test\\unit
+            coverage xml
+        '''
+        coberturaReport file:'coverage.xml'
+    }
+}
 
         stage('Performance') {
             steps {
