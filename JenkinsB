@@ -71,7 +71,7 @@ pipeline {
         script {
             
             bat 'cd C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts'
-            bat 'SET FLASK_APP=app\\api.py && "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flask" run &'
+            bat 'start /B cmd /c "SET FLASK_APP=app\\api.py && "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flask" run"'
             // Wait for Flask to start (adjust the sleep duration accordingly)
             bat 'ping 127.0.0.1 -n 10 > nul'
             // Run JMeter test
