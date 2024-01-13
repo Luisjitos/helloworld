@@ -69,18 +69,13 @@ pipeline {
        stage('Performance') {
     steps {
         script {
-            // Change directory to Python Scripts
+            
             bat 'cd C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts'
-            
-            // Set Flask app environment variable
-            bat 'SET FLASK_APP=app\\api.py && start /B cmd /c "flask run"'
-            
+            bat 'SET FLASK_APP=app\\api.py && "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\flask" run &'
             // Wait for Flask to start (adjust the sleep duration accordingly)
             bat 'ping 127.0.0.1 -n 10 > nul'
-            
             // Run JMeter test
             bat '"C:\\apache-jmeter-5.6.2\\apache-jmeter-5.6.2\\bin\\jmeter" -n -t C:\\CP1B\\helloworld\\test\\jmeter\\flask.jmx -f -l flask.jtl'
-            
             // Generate performance report
             perfReport sourceDataFiles:'flask.jtl'
         }
