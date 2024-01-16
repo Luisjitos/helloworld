@@ -16,8 +16,10 @@ pipeline {
                     bat 'whoami'
                     bat 'hostname'
                     bat '''
-                        set PYTHONPATH=%WORKSPACE%
-                        coverage run --source=app --omit=app/__init__.py,app/api.py -m pytest test/unit --junitxml=result-unit.xml
+                       set PYTHONPATH=%WORKSPACE%
+                       icacls %WORKSPACE% /grant Everyone:F /T
+                       dir
+                       coverage run --source=app --omit=app\__init__.py,app\api.py -m pytest test\unit --junitxml=result-unit.xml
                     '''
                     junit 'result*.xml'
                 }
