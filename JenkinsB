@@ -17,8 +17,6 @@ pipeline {
                     bat 'hostname'
                     bat '''
                        set PYTHONPATH=%WORKSPACE%
-                       icacls %WORKSPACE% /grant Everyone:F /T
-                       dir
                        "C:\\Users\\JoseLuis\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\coverage" run --source=app --omit=app\__init__.py,app\api.py -m pytest test\unit --junitxml=result-unit.xml
                     '''
                     junit 'result*.xml'
